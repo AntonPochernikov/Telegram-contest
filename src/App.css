@@ -1,0 +1,30 @@
+/*=================================
+	global styles
+=================================*/
+body {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+
+	color: #333;
+	font-family: sans-serif;
+}
+
+.hidden {
+	display: none !important;
+}
+
+:root {
+	--color-main--light-theme: #fff;
+	--color-main--dark-theme: #242f3e;
+
+	--color-font--light-theme: #96a2aa;
+	--color-font--dark-theme: #546778;
+
+	--color-additional--dark-theme: #253241;
+}
+
+.app {
+	padding: 20px;
+}

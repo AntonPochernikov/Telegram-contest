@@ -1,0 +1,25 @@
+/*=================================
+	chart scroller
+=================================*/
+.chart-scroller {
+	position: relative;
+	height: 50px;
+
+	overflow: hidden;
+}
+
+.chart-scroller__line {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.chart-scroller__thumb {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+
+	background-color: rgba(245, 245, 245, 0.6);
+	cursor: pointer;
+}
