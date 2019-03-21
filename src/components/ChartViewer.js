@@ -5,9 +5,8 @@ import * as select from '../selectors/index.js';
 
 const mapStateToProps = state => ({
   lines: select.getVisibleLineColumns(state),
-  xAxis: select.getXAxisColumn(state),
-
-  viewerLines: select.getViewerLineColumns(state),
+  dates: select.getChartDates(state),
+  valueScales: select.getViewerValueScales(state),
 
   thumbPosition: state.ui.thumb.position,
   thumbWidth: state.ui.thumb.width,

@@ -35,13 +35,14 @@ export const getPartitionByColumnType = createSelector(
   chart => _.partition(chart, ({ type }) => type === 'x'),
 );
 
-export const getXAxisColumn = createSelector(
+export const getChartDates = createSelector(
   getPartitionByColumnType,
   coll => _
     .chain(coll)
     .head()
     .head()
-    .value(),
+    .value()
+    .column,
 );
 
 export const getLineColumns = createSelector(
@@ -90,18 +91,6 @@ export const getViewerLineColumns = createSelector(
     }),
 );
 
-export const getViewerXAxis = createSelector(
-  getXAxisColumn,
-  getThumbParams,
-  (x, { position, width }) => {
-    const { column } = x;
-    const colLength = column.length;
-    const lower = Math.ceil(colLength * position);
-    const upper = lower + Math.floor(colLength * width);
-    return { ...x, column: column.slice(lower, upper) };
-  },
-);
-
 export const getViewerVisibleMaxLinesYPoint = createSelector(
   getViewerLineColumns,
   lines => Math.max(..._
@@ -109,4 +98,14 @@ export const getViewerVisibleMaxLinesYPoint = createSelector(
     .map(({ column }) => column)
     .flatten()
     .value()),
+);
+
+export const getViewerValueScales = createSelector(
+  getViewerVisibleMaxLinesYPoint,
+  (max) => {
+    const last = 0.9 * max;
+    const step = last / 5;
+    const boilerPlateScales = [1, 2, 3, 4, 5];
+    return boilerPlateScales.map((item, i) => i * Math.floor(step));
+  },
 );

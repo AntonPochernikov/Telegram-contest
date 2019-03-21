@@ -7,6 +7,12 @@ import './ChartViewer.css';
 export default class ChartViewer extends React.Component {
   static defaultProps = {
     lines: [],
+    dates: [],
+    valueScales: [],
+
+    thumbPosition: 0,
+    thumbWidth: 0.2,
+
     maxYPoint: 0,
     viewerMaxYPoint: 0,
   };
@@ -87,7 +93,7 @@ export default class ChartViewer extends React.Component {
     this.dates.current.style.width = `${containerWidth}px`;
     this.dates.current.style.transform = `translateX(${-containerWidth * thumbPosition}px)`;
     const datesCount = 1 / thumbWidth * 5;
-    const dates = this.props.xAxis.column;
+    const { dates } = this.props;
     const filteredDates = dates
       .slice(0, dates.length - 1)
       .filter((date, i) => i % Math.floor(dates.length / datesCount) === 0)
@@ -98,10 +104,21 @@ export default class ChartViewer extends React.Component {
   }
 
   render() {
-    const { lines } = this.props;
+    const { lines, valueScales } = this.props;
     return (
       <div className='chart-viewer'>
         <div className='chart-viewer__lines' ref={this.container}>
+          <ul className='chart-viewer__value-scales'>
+            {valueScales.map((value, i) => (
+              <li
+                key={value}
+                className='chart-viewer__value-scale'
+                style={{ bottom: `${i * 22.5}%` }}
+              >
+                {value}
+              </li>
+            ))}
+          </ul>
           {lines.map(({ name }) => (
             <canvas
               ref={this.ref[name]}
@@ -123,6 +140,12 @@ export default class ChartViewer extends React.Component {
 
 ChartViewer.propTypes = {
   lines: PropTypes.array.isRequired,
+  dates: PropTypes.array.isRequired,
+  valueScales: PropTypes.array.isRequired,
+
+  thumbPosition: PropTypes.number.isRequired,
+  thumbWidth: PropTypes.number.isRequired,
+
   maxYPoint: PropTypes.number.isRequired,
   viewerMaxYPoint: PropTypes.number.isRequired,
 };
