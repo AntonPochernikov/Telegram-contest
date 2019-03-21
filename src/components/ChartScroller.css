@@ -20,6 +20,33 @@
 	left: 0;
 	height: 100%;
 
-	background-color: rgba(245, 245, 245, 0.6);
+	background-color: rgba(240, 240, 240, 0.6);
 	cursor: pointer;
+
+/*	transition: all 0.1s ease;*/
+}
+
+.chart-scroller__thumb:focus {
+	outline: none;
+/*	box-shadow: 0 0 10px -3px #777;
+	background-color: rgba(245, 245, 245, 0.6);*/
+}
+
+.chart-scroller__thumb-resizer {
+	position: absolute;
+	top: 0;
+
+	width: 5px;
+	height: 100%;
+
+	background-color: rgba(220, 220, 220, 0.6);
+
+	cursor: col-resize;
+}
+
+.chart-scroller__thumb-resizer--left {
+	left: 0;
+}
+.chart-scroller__thumb-resizer--right {
+	right: 0;
 }

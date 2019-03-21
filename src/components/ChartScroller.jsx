@@ -2,7 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import './ChartScroller.css';
 
-const leftMargin = 20;
+const leftMargin = 30;
+const thumbThreshold = 0.2;
 
 export default class ChartScroller extends React.Component {
   static defaultProps = {
@@ -26,11 +27,11 @@ export default class ChartScroller extends React.Component {
   }
 
   componentDidMount() {
-    this.renderCanvas();
+    this.renderChartLines();
   }
 
   componentDidUpdate() {
-    this.renderCanvas();
+    this.renderChartLines();
   }
 
   alignScrollThumb() {
@@ -49,39 +50,124 @@ export default class ChartScroller extends React.Component {
     let nextThumbPosition;
     const { width } = this.container.current.getBoundingClientRect();
     const thumbWidth = width * this.props.thumbWidth;
+    const thumbPosition = width * this.props.thumbPosition;
+    const mousePosition = e.pageX;
+    if (!this.mouseOnThumbPosition) {
+      this.mouseOnThumbPosition = mousePosition - leftMargin - thumbPosition;
+    }
+    const spaceLeft = thumbWidth - this.mouseOnThumbPosition;
 
     switch (true) {
-      case (e.pageX - leftMargin - (thumbWidth / 2) < 0): {
+      // out of left bound case
+      case (mousePosition - leftMargin - this.mouseOnThumbPosition < 0): {
         nextThumbPosition = 0;
         break;
       }
-      case (e.pageX > width + leftMargin - (thumbWidth / 2)): {
+      // out of right bound case
+      case (mousePosition > width + leftMargin - spaceLeft): {
         nextThumbPosition = (width - thumbWidth) / width;
         break;
       }
       default: {
-        nextThumbPosition = (e.pageX - leftMargin - (thumbWidth / 2)) / width;
+        nextThumbPosition = (mousePosition - leftMargin - this.mouseOnThumbPosition) / width;
       }
     }
     this.props.setThumbPosition({ position: nextThumbPosition });
   }
 
   handleThumbUp = () => {
+    this.mouseOnThumbPosition = null;
     window.removeEventListener('mousemove', this.handleThumbMove);
     window.removeEventListener('mouseup', this.handleThumbUp);
   }
 
   handleThumbDrag = (e) => {
     e.preventDefault();
-    window.removeEventListener('mousemove', this.handleThumbMove);
-    window.removeEventListener('mouseup', this.handleThumbUp);
   }
 
-  renderCanvas() {
+  handleThumbLeftResizerDown = (e) => {
+    e.stopPropagation();
+    window.addEventListener('mousemove', this.handleLeftResizeMove);
+    window.addEventListener('mouseup', this.handleLeftResizeUp);
+    return false;
+  }
+
+  handleLeftResizeMove = (e) => {
+    const mousePosition = e.pageX;
+    const { width } = this.container.current.getBoundingClientRect();
+    const thumbPosition = this.props.thumbPosition * width;
+    const thumbWidth = this.props.thumbWidth * width;
+    const thumbPositionRight = thumbPosition + thumbWidth;
+    let nextThumbWidth;
+    let nextThumbPosition;
+
+    switch (true) {
+      // out of left bound case
+      case (mousePosition - leftMargin < 0): {
+        nextThumbPosition = 0;
+        nextThumbWidth = (thumbWidth - nextThumbPosition * width + thumbPosition) / width;
+        break;
+      }
+      // thumb thiner than threshold case
+      case ((thumbWidth + thumbPosition + leftMargin - mousePosition) < thumbThreshold * width): {
+        nextThumbWidth = thumbThreshold;
+        nextThumbPosition = (thumbPositionRight - thumbThreshold * width) / width;
+        break;
+      }
+      default: {
+        nextThumbPosition = (mousePosition - leftMargin) / width;
+        nextThumbWidth = (thumbWidth - nextThumbPosition * width + thumbPosition) / width;
+      }
+    }
+    this.props.setThumbPositionWidth({ position: nextThumbPosition, width: nextThumbWidth });
+  }
+
+  handleLeftResizeUp = () => {
+    window.removeEventListener('mousemove', this.handleLeftResizeMove);
+    window.removeEventListener('mouseup', this.handleLeftResizeUp);
+  }
+
+  handleThumbRightResizerDown = (e) => {
+    e.stopPropagation();
+    window.addEventListener('mousemove', this.handleRightResizeMove);
+    window.addEventListener('mouseup', this.handleRightResizeUp);
+    return false;
+  }
+
+  handleRightResizeMove = (e) => {
+    const mousePosition = e.pageX;
+    const { width } = this.container.current.getBoundingClientRect();
+    const thumbPosition = this.props.thumbPosition * width;
+    const { thumbWidth } = this.props;
+    let nextThumbWidth;
+    switch (true) {
+      // thumb thiner than threshold case
+      case (mousePosition - leftMargin < thumbPosition + thumbThreshold * width): {
+        nextThumbWidth = thumbWidth;
+        break;
+      }
+      // out of right bound case
+      case (mousePosition > width + leftMargin): {
+        nextThumbWidth = (width - thumbPosition) / width;
+        break;
+      }
+      default: {
+        nextThumbWidth = (mousePosition - thumbPosition - leftMargin) / width;
+      }
+    }
+    this.props.setThumbWidth({ width: nextThumbWidth });
+  }
+
+  handleRightResizeUp = () => {
+    window.removeEventListener('mousemove', this.handleRightResizeMove);
+    window.removeEventListener('mouseup', this.handleRightResizeUp);
+  }
+
+
+  renderChartLines() {
     const { width, height } = this.container.current.getBoundingClientRect();
     this.alignScrollThumb();
 
-    // const { maxYPoint, visibleMaxYPoint } = this.props;
     const { visibleMaxYPoint } = this.props;
     const heightModifier = 50 / (visibleMaxYPoint * 1.05);
 
@@ -135,8 +221,18 @@ export default class ChartScroller extends React.Component {
           className='chart-scroller__thumb'
           ref={this.scrollThumb}
           onMouseDown={this.handleThumbDown}
-          onDrag={this.handleThumbDrag}
-        />
+          onDragStart={this.handleThumbDrag}
+          tabIndex={0}
+        >
+          <div
+            className='chart-scroller__thumb-resizer chart-scroller__thumb-resizer--left'
+            onMouseDown={this.handleThumbLeftResizerDown}
+          />
+          <div
+            className='chart-scroller__thumb-resizer chart-scroller__thumb-resizer--right'
+            onMouseDown={this.handleThumbRightResizerDown}
+          />
+        </div>
       </div>
     );
   }

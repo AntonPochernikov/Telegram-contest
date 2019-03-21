@@ -8,7 +8,7 @@ export default class ChartViewer extends React.Component {
   static defaultProps = {
     lines: [],
     maxYPoint: 0,
-    visibleMaxYPoint: 0,
+    viewerMaxYPoint: 0,
   };
 
   constructor(props) {
@@ -42,8 +42,8 @@ export default class ChartViewer extends React.Component {
     const containerWidth = width / thumbWidth;
     this.container.current.style.width = containerWidth;
 
-    const { visibleMaxYPoint } = this.props;
-    const heightModifier = height / (visibleMaxYPoint * 1.05);
+    const { viewerMaxYPoint } = this.props;
+    const heightModifier = height / (viewerMaxYPoint * 1.05);
 
     this.props.lines.forEach(({ name, column, color }) => {
       const canvas = this.ref[name].current;
@@ -124,5 +124,5 @@ export default class ChartViewer extends React.Component {
 ChartViewer.propTypes = {
   lines: PropTypes.array.isRequired,
   maxYPoint: PropTypes.number.isRequired,
-  visibleMaxYPoint: PropTypes.number.isRequired,
+  viewerMaxYPoint: PropTypes.number.isRequired,
 };

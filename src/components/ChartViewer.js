@@ -7,11 +7,13 @@ const mapStateToProps = state => ({
   lines: select.getVisibleLineColumns(state),
   xAxis: select.getXAxisColumn(state),
 
+  viewerLines: select.getViewerLineColumns(state),
+
   thumbPosition: state.ui.thumb.position,
   thumbWidth: state.ui.thumb.width,
 
   maxYPoint: select.getMaxLinesYPoint(state),
-  visibleMaxYPoint: select.getVisibleMaxLinesYPoint(state),
+  viewerMaxYPoint: select.getViewerVisibleMaxLinesYPoint(state),
 });
 
 export default connect(

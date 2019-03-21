@@ -27,6 +27,14 @@ const thumb = handleActions({
     ...state,
     position,
   }),
+  [action.setThumbWidth]: (state, { payload: { width } }) => ({
+    ...state,
+    width,
+  }),
+  [action.setThumbPositionWidth]: (state, { payload: { position, width } }) => ({
+    position,
+    width,
+  }),
 }, thumbInit);
 
 

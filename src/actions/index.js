@@ -21,3 +21,5 @@ export const fetchCharts = () => async (dispatch) => {
 export const setLineVisibility = createAction('LINE_VISIBILITY_SET');
 
 export const setThumbPosition = createAction('THUMB_POSITION_SET');
+export const setThumbWidth = createAction('THUMB_WIDTH_SET');
+export const setThumbPositionWidth = createAction('THUMB_WIDTH_POSITION_SET');

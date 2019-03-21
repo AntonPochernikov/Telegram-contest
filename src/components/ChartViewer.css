@@ -11,6 +11,7 @@
 	position: relative;
 	height: 300px;
 
+	box-shadow: 0 1px 0 0 #e5e5e5;
 	overflow: hidden;
 }
 
@@ -37,6 +38,9 @@
 }
 
 .chart-viewer__date {
+	display: block;
+
+	opacity: 1;
 	user-select: none;
-	animation: fade-in 0.5s;
+	animation: fade-in 0.3s;
 }
