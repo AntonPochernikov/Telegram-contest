@@ -1,0 +1,26 @@
+/*=================================
+	main container
+=================================*/
+.footer {
+	display: flex;
+	justify-content: center;
+	padding: 20px 0;
+}
+
+.switch-mode-btn {
+	display: block;
+	padding: 8px 18px;
+
+	color: #108be3;
+	font-size: 24px;
+	line-height: 28px;
+
+	background-color: transparent;
+	border: none;
+
+	cursor: pointer;
+}
+
+.switch-mode-btn:focus {
+	outline: none;
+}

@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import cn from 'classnames';
 import WorkSpace from './WorkSpace.jsx';
+import Preloader from './Preloader.jsx';
+import './MainContainer.css';
 
 export default class MainContainer extends React.Component {
   static defaultProps = {
@@ -9,6 +11,12 @@ export default class MainContainer extends React.Component {
 
     fetchState: 'initial',
   };
+
+  contentByFetchState = {
+    requested: <Preloader />,
+    succeed: <WorkSpace />,
+    failed: <div>Opps! An error occurs...</div>,
+  }
 
   componentDidMount() {
     this.props.fetchCharts();
@@ -44,7 +52,7 @@ export default class MainContainer extends React.Component {
         <header className='header'>
           <h2 className='chart-name header__chart-name'>Charts</h2>
         </header>
-        {fetchState === 'succeed' && <WorkSpace />}
+        {this.contentByFetchState[fetchState]}
         <footer className='footer'>
           <button
             className='switch-mode-btn footer__switch-mode-btn'

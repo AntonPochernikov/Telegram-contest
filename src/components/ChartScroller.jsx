@@ -204,7 +204,7 @@ export default class ChartScroller extends React.Component {
   }
 
   render() {
-    const { lines } = this.props;
+    const { lines, thumbPosition, thumbWidth } = this.props;
     return (
       <div className='chart-scroller' ref={this.container}>
         {lines.map(({ name }) => (
@@ -218,12 +218,18 @@ export default class ChartScroller extends React.Component {
           />
         ))}
         <div
+          className='chart-scroller__overlay chart-scroller__overlay--left'
+          style={{ width: `${thumbPosition * 100}%` }}
+        />
+        <div
           className='chart-scroller__thumb'
           ref={this.scrollThumb}
           onMouseDown={this.handleThumbDown}
           onDragStart={this.handleThumbDrag}
           tabIndex={0}
         >
+          <div className='chart-scroller__thumb-border chart-scroller__thumb-border--top' />
+          <div className='chart-scroller__thumb-border chart-scroller__thumb-border--bottom' />
           <div
             className='chart-scroller__thumb-resizer chart-scroller__thumb-resizer--left'
             onMouseDown={this.handleThumbLeftResizerDown}
@@ -233,6 +239,10 @@ export default class ChartScroller extends React.Component {
             onMouseDown={this.handleThumbRightResizerDown}
           />
         </div>
+        <div
+          className='chart-scroller__overlay chart-scroller__overlay--right'
+          style={{ width: `${(1 - thumbPosition - thumbWidth) * 100}%` }}
+        />
       </div>
     );
   }
