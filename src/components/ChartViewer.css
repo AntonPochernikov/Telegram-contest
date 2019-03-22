@@ -74,12 +74,13 @@
 
 .chart-viewer__current-info {
 	position: absolute;
-	left: 5px;
 	top: 5px;
 }
 
 .current-info {
+	width: 120px;
 	padding: 10px 15px;
+	box-sizing: border-box;
 
 	background-color: #fff;
 	border-radius: 5px;

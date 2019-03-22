@@ -184,7 +184,7 @@ export default class ChartViewer extends React.Component {
 
         ctx.beginPath();
         ctx.strokeStyle = '#e5e5e5';
-        ctx.lineWidth = 0.5;
+        ctx.lineWidth = 1;
         ctx.moveTo(x, height);
         ctx.lineTo(x, 0);
         ctx.stroke();
@@ -213,6 +213,16 @@ export default class ChartViewer extends React.Component {
     ));
   }
 
+  getPosition = (shift, thumbWidth, containerWidth, leftMargin) => {
+    if (leftMargin < 60 && shift === leftMargin) {
+      return { left: 60 };
+    }
+    if (shift + 60 >= containerWidth) {
+      return { right: -60 };
+    }
+    return { left: leftMargin };
+  }
+
   renderCurrentDateInfo() {
     const { currentDate, currentDateInfo, lineLength } = this.props;
     if (currentDate === null) {
@@ -225,10 +235,11 @@ export default class ChartViewer extends React.Component {
 
     const containerWidth = width / thumbWidth;
     const scrollShift = containerWidth * thumbPosition;
-    const leftPosition = currentDate / (lineLength - 1) * containerWidth - scrollShift;
+    const leftShift = currentDate / (lineLength - 1) * containerWidth;
+    const leftPosition = leftShift - scrollShift;
 
     const infoStyle = {
-      left: leftPosition,
+      ...this.getPosition(leftShift, width, containerWidth, leftPosition),
       transform: 'translateX(-50%)',
     };
 
