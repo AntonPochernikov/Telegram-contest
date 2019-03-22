@@ -1,9 +1,12 @@
 import { createSelector } from 'reselect';
 import _ from 'lodash';
 
+const emptyObj = {};
+
 export const getCharts = state => state.domain.charts;
 export const getVisibleLines = state => state.ui.visibleLines;
 export const getThumbParams = state => state.ui.thumb;
+export const getCurrentDate = state => state.ui.currentDate;
 
 export const getJoinedChartData = createSelector(
   getCharts,
@@ -54,10 +57,29 @@ export const getLineColumns = createSelector(
     .value(),
 );
 
+export const getLineColumnLength = createSelector(
+  getLineColumns,
+  lines => _.head(lines).column.length,
+);
+
 export const getVisibleLineColumns = createSelector(
   getLineColumns,
   getVisibleLines,
   (columns, visibleLines) => _.filter(columns, ({ id }) => visibleLines.includes(id)),
+);
+
+export const getCurrentDateInfo = createSelector(
+  getVisibleLineColumns,
+  getChartDates,
+  getCurrentDate,
+  (cols, dates, index) => {
+    if (index === null) {
+      return emptyObj;
+    }
+    const date = dates[index];
+    const lines = cols.map(({ name, color, column }) => ({ name, color, value: column[index] }));
+    return { date, lines };
+  },
 );
 
 export const getMaxLinesYPoint = createSelector(
@@ -105,7 +127,8 @@ export const getViewerValueScales = createSelector(
   (max) => {
     const last = 0.9 * max;
     const step = last / 5;
-    const boilerPlateScales = [1, 2, 3, 4, 5];
-    return boilerPlateScales.map((item, i) => i * Math.floor(step));
+    const boilerPlateScales = [1, 2, 3, 4, 5, 6];
+
+    return boilerPlateScales.map((item, i) => Math.round(i * step));
   },
 );

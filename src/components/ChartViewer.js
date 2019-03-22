@@ -7,6 +7,9 @@ const mapStateToProps = state => ({
   lines: select.getVisibleLineColumns(state),
   dates: select.getChartDates(state),
   valueScales: select.getViewerValueScales(state),
+  lineLength: select.getLineColumnLength(state),
+  currentDate: state.ui.currentDate,
+  currentDateInfo: select.getCurrentDateInfo(state),
 
   thumbPosition: state.ui.thumb.position,
   thumbWidth: state.ui.thumb.width,

@@ -4,11 +4,16 @@ import { format as formatDate } from 'date-fns';
 import _ from 'lodash';
 import './ChartViewer.css';
 
+const margin = 30;
+
 export default class ChartViewer extends React.Component {
   static defaultProps = {
     lines: [],
     dates: [],
     valueScales: [],
+    lineLength: 0,
+    currentDate: null,
+    currentDateInfo: {},
 
     thumbPosition: 0,
     thumbWidth: 0.2,
@@ -21,6 +26,7 @@ export default class ChartViewer extends React.Component {
     super(props);
     this.state = {
       mounted: false,
+      isScalling: false,
     };
 
     this.ref = {};
@@ -32,25 +38,108 @@ export default class ChartViewer extends React.Component {
   }
 
   componentDidMount() {
-    this.renderChartLines();
+    this.maxYPoint = this.props.viewerMaxYPoint;
+    this.renderChartLines(this.maxYPoint);
+
     this.setState({
       mounted: true,
     });
   }
 
   componentDidUpdate() {
-    this.renderChartLines();
+    if (!this.state.isScalling) {
+      this.performChartScaling();
+    }
   }
 
-  renderChartLines() {
+  performChartScaling() {
+    if (this.maxYPoint > this.props.viewerMaxYPoint) {
+      this.setState({
+        isScalling: true,
+      });
+      const start = this.maxYPoint;
+      const end = this.props.viewerMaxYPoint;
+      const diff = start - end;
+      const step = Math.ceil(diff / 20);
+      for (let i = 0; i <= diff; i += step) {
+        setTimeout(
+          () => {
+            if (i > (diff - step)) {
+              this.maxYPoint = end;
+              this.renderChartLines(this.maxYPoint);
+              this.setState({
+                isScalling: false,
+              });
+              return;
+            }
+
+            this.maxYPoint -= step;
+            this.renderChartLines(this.maxYPoint);
+          },
+          i * 2,
+        );
+      }
+      return;
+    }
+
+    if (this.maxYPoint < this.props.viewerMaxYPoint) {
+      this.setState({
+        isScalling: true,
+      });
+      const start = this.props.viewerMaxYPoint;
+      const end = this.maxYPoint;
+      const diff = start - end;
+      const step = Math.ceil(diff / 20);
+      for (let i = 0; i <= diff; i += step) {
+        setTimeout(
+          () => {
+            if (i > (diff - step)) {
+              this.maxYPoint = start;
+              this.renderChartLines(this.maxYPoint);
+              this.setState({
+                isScalling: false,
+              });
+              return;
+            }
+
+            this.maxYPoint += step;
+            this.renderChartLines(this.maxYPoint);
+          },
+          i * 2,
+        );
+      }
+      return;
+    }
+
+    this.renderChartLines(this.maxYPoint);
+  }
+
+  // select date
+  handleLineClick = (e) => {
+    e.stopPropagation();
+    const { width } = this.container.current.getBoundingClientRect();
+    const { thumbWidth, thumbPosition, lineLength } = this.props;
+
+    const containerWidth = width / thumbWidth;
+    const currentPoint = containerWidth * thumbPosition + e.pageX - margin;
+    const currentPercent = currentPoint / containerWidth;
+    const currentIndex = Math.round((lineLength - 1) * currentPercent);
+
+    this.props.setCurrentDateIndex({ index: currentIndex });
+  }
+
+  handleDateInfoClick = () => {
+    this.props.resetCurrentDateIndex();
+  }
+
+  renderChartLines(maxYPoint) {
     const { width, height } = this.container.current.getBoundingClientRect();
-    const { thumbWidth, thumbPosition } = this.props;
+    const { thumbWidth, thumbPosition, currentDate } = this.props;
     const containerWidth = width / thumbWidth;
     this.container.current.style.width = containerWidth;
+    const heightModifier = height / (maxYPoint * 1.05);
 
-    const { viewerMaxYPoint } = this.props;
-    const heightModifier = height / (viewerMaxYPoint * 1.05);
-
+    // draw chart lines
     this.props.lines.forEach(({ name, column, color }) => {
       const canvas = this.ref[name].current;
       canvas.style.transform = `translateX(${-containerWidth * thumbPosition}px)`;
@@ -62,24 +151,45 @@ export default class ChartViewer extends React.Component {
       ctx.canvas.width = containerWidth;
       ctx.canvas.height = height;
       ctx.strokeStyle = color;
+      ctx.fillStyle = 'white';
       ctx.lineWidth = 2;
 
       ctx.beginPath();
       ctx.moveTo(0, height);
       let x = 0;
 
-      column.forEach((y, i) => {
-        if (i === 0) {
-          ctx.moveTo(x, height - (y * heightModifier));
-          return;
+      column.forEach((value, i) => {
+        const y = height - (value * heightModifier);
+        if (i !== 0) {
+          ctx.lineTo(x, y);
         }
+        ctx.moveTo(x, y);
         x += step;
-        ctx.lineTo(x, height - (y * heightModifier));
-        ctx.moveTo(x, height - (y * heightModifier));
       });
 
       ctx.stroke();
       ctx.closePath();
+
+      // highlight selected date with circle
+      if (currentDate !== null) {
+        ctx.beginPath();
+        x = currentDate * step;
+        const y = height - (column[currentDate] * heightModifier);
+        const radius = 5;
+        ctx.moveTo(x + radius, y);
+        ctx.arc(x, y, radius, 0, Math.PI * 2, true);
+        ctx.fill();
+        ctx.stroke();
+        ctx.closePath();
+
+        ctx.beginPath();
+        ctx.strokeStyle = '#e5e5e5';
+        ctx.lineWidth = 0.5;
+        ctx.moveTo(x, height);
+        ctx.lineTo(x, 0);
+        ctx.stroke();
+        ctx.closePath();
+      }
     });
   }
 
@@ -103,6 +213,47 @@ export default class ChartViewer extends React.Component {
     ));
   }
 
+  renderCurrentDateInfo() {
+    const { currentDate, currentDateInfo, lineLength } = this.props;
+    if (currentDate === null) {
+      return null;
+    }
+
+    const { date, lines } = currentDateInfo;
+    const { width } = this.container.current.getBoundingClientRect();
+    const { thumbWidth, thumbPosition } = this.props;
+
+    const containerWidth = width / thumbWidth;
+    const scrollShift = containerWidth * thumbPosition;
+    const leftPosition = currentDate / (lineLength - 1) * containerWidth - scrollShift;
+
+    const infoStyle = {
+      left: leftPosition,
+      transform: 'translateX(-50%)',
+    };
+
+    return (
+      <div
+        className='chart-viewer__current-info current-info'
+        style={infoStyle}
+        onClick={this.handleDateInfoClick}
+      >
+        <div className='current-info__date'>
+          {formatDate(date, 'ddd, MMM DD')}
+        </div>
+        <ul className='current-info__lines'>
+          {lines.map(({ name, value, color }) => (
+            <li key={name} className='current-info__line' style={{ color }}>
+              <p className='current-info__line-value'>{value}</p>
+              <p className='current-info__line-name'>{name}</p>
+            </li>
+          ))}
+        </ul>
+
+      </div>
+    );
+  }
+
   render() {
     const { lines, valueScales } = this.props;
     return (
@@ -113,7 +264,7 @@ export default class ChartViewer extends React.Component {
               <li
                 key={value}
                 className='chart-viewer__value-scale'
-                style={{ bottom: `${i * 22.5}%` }}
+                style={{ bottom: `${i * 18}%` }}
               >
                 {value}
               </li>
@@ -125,6 +276,7 @@ export default class ChartViewer extends React.Component {
               key={name}
               id={name}
               className='chart-viewer__line'
+              onClick={this.handleLineClick}
               width="100"
               height="200"
             />
@@ -133,6 +285,7 @@ export default class ChartViewer extends React.Component {
         <ul className='chart-viewer__dates' ref={this.dates}>
           {this.renderDates()}
         </ul>
+        {this.renderCurrentDateInfo()}
       </div>
     );
   }
@@ -142,6 +295,9 @@ ChartViewer.propTypes = {
   lines: PropTypes.array.isRequired,
   dates: PropTypes.array.isRequired,
   valueScales: PropTypes.array.isRequired,
+  lineLength: PropTypes.number.isRequired,
+  currentDate: PropTypes.number,
+  currentDateInfo: PropTypes.object.isRequired,
 
   thumbPosition: PropTypes.number.isRequired,
   thumbWidth: PropTypes.number.isRequired,

@@ -18,6 +18,8 @@ export const fetchCharts = () => async (dispatch) => {
   }
 };
 
+export const setCurrentDateIndex = createAction('CURRENT_DATE_INDEX_SET');
+export const resetCurrentDateIndex = createAction('CURRENT_DATE_INDEX_RESET');
 export const setLineVisibility = createAction('LINE_VISIBILITY_SET');
 
 export const setThumbPosition = createAction('THUMB_POSITION_SET');

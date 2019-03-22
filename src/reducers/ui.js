@@ -17,9 +17,15 @@ const visibleLines = handleActions({
   [action.fetchChartsSuccess]: (state, { payload: { charts } }) => Object
     .keys(charts.types)
     .filter(type => charts.types[type] === 'line'),
-  [action.setLineVisibility]: (state, { payload: { lineId } }) => (
-    state.includes(lineId) ? _.without(state, lineId) : [...state, lineId]
-  ),
+  [action.setLineVisibility]: (state, { payload: { lineId } }) => {
+    if (!state.includes(lineId)) {
+      return [...state, lineId];
+    }
+    if (state.length === 1) {
+      return state;
+    }
+    return _.without(state, lineId);
+  },
 }, []);
 
 const thumb = handleActions({
@@ -37,9 +43,15 @@ const thumb = handleActions({
   }),
 }, thumbInit);
 
+const currentDate = handleActions({
+  [action.setCurrentDateIndex]: (state, { payload: { index } }) => (state === index ? null : index),
+  [action.resetCurrentDateIndex]: () => null,
+}, null);
+
 
 export default combineReducers({
   mode,
   thumb,
   visibleLines,
+  currentDate,
 });

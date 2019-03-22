@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import './ChartScroller.css';
 
-const leftMargin = 30;
+const margin = 30;
 const thumbThreshold = 0.2;
 
 export default class ChartScroller extends React.Component {
@@ -53,23 +53,23 @@ export default class ChartScroller extends React.Component {
     const thumbPosition = width * this.props.thumbPosition;
     const mousePosition = e.pageX;
     if (!this.mouseOnThumbPosition) {
-      this.mouseOnThumbPosition = mousePosition - leftMargin - thumbPosition;
+      this.mouseOnThumbPosition = mousePosition - margin - thumbPosition;
     }
     const spaceLeft = thumbWidth - this.mouseOnThumbPosition;
 
     switch (true) {
       // out of left bound case
-      case (mousePosition - leftMargin - this.mouseOnThumbPosition < 0): {
+      case (mousePosition - margin - this.mouseOnThumbPosition < 0): {
         nextThumbPosition = 0;
         break;
       }
       // out of right bound case
-      case (mousePosition > width + leftMargin - spaceLeft): {
+      case (mousePosition > width + margin - spaceLeft): {
         nextThumbPosition = (width - thumbWidth) / width;
         break;
       }
       default: {
-        nextThumbPosition = (mousePosition - leftMargin - this.mouseOnThumbPosition) / width;
+        nextThumbPosition = (mousePosition - margin - this.mouseOnThumbPosition) / width;
       }
     }
     this.props.setThumbPosition({ position: nextThumbPosition });
@@ -103,19 +103,19 @@ export default class ChartScroller extends React.Component {
 
     switch (true) {
       // out of left bound case
-      case (mousePosition - leftMargin < 0): {
+      case (mousePosition - margin < 0): {
         nextThumbPosition = 0;
         nextThumbWidth = (thumbWidth - nextThumbPosition * width + thumbPosition) / width;
         break;
       }
       // thumb thiner than threshold case
-      case ((thumbWidth + thumbPosition + leftMargin - mousePosition) < thumbThreshold * width): {
+      case ((thumbWidth + thumbPosition + margin - mousePosition) < thumbThreshold * width): {
         nextThumbWidth = thumbThreshold;
         nextThumbPosition = (thumbPositionRight - thumbThreshold * width) / width;
         break;
       }
       default: {
-        nextThumbPosition = (mousePosition - leftMargin) / width;
+        nextThumbPosition = (mousePosition - margin) / width;
         nextThumbWidth = (thumbWidth - nextThumbPosition * width + thumbPosition) / width;
       }
     }
@@ -138,21 +138,20 @@ export default class ChartScroller extends React.Component {
     const mousePosition = e.pageX;
     const { width } = this.container.current.getBoundingClientRect();
     const thumbPosition = this.props.thumbPosition * width;
-    const { thumbWidth } = this.props;
     let nextThumbWidth;
     switch (true) {
       // thumb thiner than threshold case
-      case (mousePosition - leftMargin < thumbPosition + thumbThreshold * width): {
-        nextThumbWidth = thumbWidth;
+      case (mousePosition - margin < thumbPosition + thumbThreshold * width): {
+        nextThumbWidth = thumbThreshold;
         break;
       }
       // out of right bound case
-      case (mousePosition > width + leftMargin): {
+      case (mousePosition > width + margin): {
         nextThumbWidth = (width - thumbPosition) / width;
         break;
       }
       default: {
-        nextThumbWidth = (mousePosition - thumbPosition - leftMargin) / width;
+        nextThumbWidth = (mousePosition - thumbPosition - margin) / width;
       }
     }
     this.props.setThumbWidth({ width: nextThumbWidth });
@@ -205,6 +204,8 @@ export default class ChartScroller extends React.Component {
 
   render() {
     const { lines, thumbPosition, thumbWidth } = this.props;
+    const overlayWidthLeft = thumbPosition * 100;
+    const overlayWidthRight = 100 - thumbPosition * 100 - thumbWidth * 100;
     return (
       <div className='chart-scroller' ref={this.container}>
         {lines.map(({ name }) => (
@@ -219,7 +220,11 @@ export default class ChartScroller extends React.Component {
         ))}
         <div
           className='chart-scroller__overlay chart-scroller__overlay--left'
-          style={{ width: `${thumbPosition * 100}%` }}
+          style={{ width: `${overlayWidthLeft}%` }}
+        />
+        <div
+          className='chart-scroller__overlay chart-scroller__overlay--right'
+          style={{ width: `${overlayWidthRight}%` }}
         />
         <div
           className='chart-scroller__thumb'
@@ -239,10 +244,6 @@ export default class ChartScroller extends React.Component {
             onMouseDown={this.handleThumbRightResizerDown}
           />
         </div>
-        <div
-          className='chart-scroller__overlay chart-scroller__overlay--right'
-          style={{ width: `${(1 - thumbPosition - thumbWidth) * 100}%` }}
-        />
       </div>
     );
   }

@@ -69,5 +69,49 @@
 
 	opacity: 1;
 	user-select: none;
-	animation: fade-in 0.3s;
+	animation: fade-in 0.1s;
+}
+
+.chart-viewer__current-info {
+	position: absolute;
+	left: 5px;
+	top: 5px;
+}
+
+.current-info {
+	padding: 10px 15px;
+
+	background-color: #fff;
+	border-radius: 5px;
+
+	box-shadow: 0 0 4px -1px #777;
+
+	user-select: none;
+	cursor: pointer;
+}
+
+.current-info__date {
+	color: #000;
+	margin-bottom: 15px;
+	white-space: nowrap;
+}
+
+.current-info__lines {
+	display: flex;
+	justify-content: space-between;
+	margin: 0;
+	padding: 0;
+
+	list-style: none;
+}
+
+.current-info__line-value,
+.current-info__line-name {
+	padding: 0;
+	margin: 0;
+}
+
+.current-info__line-value {
+	font-size: 18px;
+	font-weight: 700;
 }
