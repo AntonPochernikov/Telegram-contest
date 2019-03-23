@@ -1,13 +1,13 @@
 # Charts
 Telegram march 2019 contest charts application.
 
-Run application in development mode:\n
+**Run application in development mode:**
 ```
 npm start
 ```
 *application will be running on http://localhost:3000*
 
-Make build:
+**Make build:**
 ```
 npm run build
 ```
