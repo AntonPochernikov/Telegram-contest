@@ -5,9 +5,9 @@ Telegram march 2019 contest charts application.
 ```
 npm start
 ```
-*application will be running on http://localhost:3000*
 
 **Make build:**
 ```
 npm run build
 ```
+*application will be running on http://localhost:3000*
