@@ -1,5 +1,9 @@
-## Telegram contest
+# Charts
+Telegram march 2019 contest charts application.
 
-npm start
+Run application in development mode:
+`npm start`
+*application will be running on http://localhost:3000*
 
-npm run build
+Make build:
+`npm run build`
