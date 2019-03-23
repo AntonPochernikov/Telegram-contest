@@ -143,6 +143,10 @@ export default class ChartViewer extends React.Component {
     this.container.current.style.width = containerWidth;
     const heightModifier = height / (maxYPoint * 1.05);
 
+    const rootStyle = getComputedStyle(document.querySelector('.app'));
+    const fillStyle = rootStyle.getPropertyValue('--color-background');
+    const customStrokeStyle = rootStyle.getPropertyValue('--color-shadow');
+
     // draw chart lines
     this.props.lines.forEach(({ name, column, color }) => {
       const canvas = this.ref[name].current;
@@ -155,7 +159,7 @@ export default class ChartViewer extends React.Component {
       ctx.canvas.width = containerWidth;
       ctx.canvas.height = height;
       ctx.strokeStyle = color;
-      ctx.fillStyle = 'white';
+      ctx.fillStyle = fillStyle;
       ctx.lineWidth = 2;
 
       ctx.beginPath();
@@ -187,7 +191,7 @@ export default class ChartViewer extends React.Component {
         ctx.closePath();
 
         ctx.beginPath();
-        ctx.strokeStyle = '#e5e5e5';
+        ctx.strokeStyle = customStrokeStyle;
         ctx.lineWidth = 1;
         ctx.moveTo(x, height);
         ctx.lineTo(x, 0);

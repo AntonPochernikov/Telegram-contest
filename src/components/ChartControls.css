@@ -69,8 +69,14 @@
 	height: 14px;
 	box-sizing: border-box;
 
-	border: 2px solid #fff;
+	border: 2px solid transparent;
 	border-top-color: transparent;
 	border-left-color: transparent;
 	transform: rotate(45deg);
+}
+
+.chart-control__checkbox:checked + .chart-control__label .chart-control__label-checkbox::after {
+	border: 2px solid #fff;
+	border-top-color: transparent;
+	border-left-color: transparent;
 }

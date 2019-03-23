@@ -7,7 +7,6 @@ body {
 	margin: 0;
 	padding: 0;
 
-	color: #333;
 	font-family: sans-serif;
 }
 
@@ -17,15 +16,37 @@ body {
 
 :root {
 	--color-main--light-theme: #fff;
+	--color-font--light-theme: #333;
+	--colol-font-neutral--light-theme: #888;
+	--color-shadow--light-theme: #e5e5e5;
+	--color-overlay--light-theme: rgb(233, 246, 255);
+
 	--color-main--dark-theme: #242f3e;
+	--color-font--dark-theme: #fff;
+	--colol-font-neutral--dark-theme: #546778;
+	--color-shadow--dark-theme: #546778;
+	--color-overlay--dark-theme: #202a37;
+}
 
-	--color-font--light-theme: #96a2aa;
-	--color-font--dark-theme: #546778;
+.app--mode-day {
+	--color-background: var(--color-main--light-theme);
+	--color-font: var(--color-font--light-theme);
+	--color-font-neutral: var(--colol-font-neutral--light-theme);
+	--color-shadow: var(--color-shadow--light-theme);
+	--color-overlay: var(--color-overlay--light-theme);
+}
 
-	--color-additional--dark-theme: #253241;
+.app--mode-night {
+	--color-background: var(--color-main--dark-theme);
+	--color-font: var(--color-font--dark-theme);
+	--color-font-neutral: var(--colol-font-neutral--dark-theme);
+	--color-shadow: var(--color-shadow--dark-theme);
+	--color-overlay: var(--color-overlay--dark-theme);
 }
 
 .app {
+	background-color: var(--color-background);
+	color: var(--color-font);
 	padding: 30px;
 }
 

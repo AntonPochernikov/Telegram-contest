@@ -16,6 +16,8 @@ const mapStateToProps = state => ({
 
   maxYPoint: select.getMaxLinesYPoint(state),
   viewerMaxYPoint: select.getViewerVisibleMaxLinesYPoint(state),
+
+  mode: state.ui.mode,
 });
 
 export default connect(

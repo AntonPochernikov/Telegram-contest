@@ -23,9 +23,9 @@
 	bottom: 0;
 	width: 100%;
 
-	color: #888;
+	color: var(--color-font-neutral);
 
-	box-shadow: 0 1px 0 0 #e5e5e5;
+	box-shadow: 0 1px 0 0 var(--color-shadow);
 
 	user-select: none;
 }
@@ -34,7 +34,7 @@
 	position: relative;
 	height: 300px;
 
-	box-shadow: 0 1px 0 0 #e5e5e5;
+	box-shadow: 0 1px 0 0 var(--color-shadow);
 	overflow: hidden;
 }
 
@@ -65,7 +65,7 @@
 .chart-viewer__date {
 	display: block;
 
-	color: #888;
+	color: var(--color-font-neutral);
 
 	opacity: 1;
 
@@ -84,17 +84,16 @@
 	padding: 10px 15px;
 	box-sizing: border-box;
 
-	background-color: #fff;
+	background-color: var(--color-background);
 	border-radius: 5px;
 
-	box-shadow: 0 0 4px -1px #777;
+	box-shadow: 0 0 4px -1px var(--color-font-neutral);
 
 	user-select: none;
 	cursor: pointer;
 }
 
 .current-info__date {
-	color: #000;
 	margin-bottom: 15px;
 	white-space: nowrap;
 }
