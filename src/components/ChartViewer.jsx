@@ -53,65 +53,69 @@ export default class ChartViewer extends React.Component {
   }
 
   performChartScaling() {
-    if (this.maxYPoint > this.props.viewerMaxYPoint) {
-      this.setState({
-        isScalling: true,
-      });
-      const start = this.maxYPoint;
-      const end = this.props.viewerMaxYPoint;
-      const diff = start - end;
-      const step = Math.ceil(diff / 20);
-      for (let i = 0; i <= diff; i += step) {
-        setTimeout(
-          () => {
-            if (i > (diff - step)) {
-              this.maxYPoint = end;
-              this.renderChartLines(this.maxYPoint);
-              this.setState({
-                isScalling: false,
-              });
-              return;
-            }
+    // this animation is too slow for heavy charts rendering
 
-            this.maxYPoint -= step;
-            this.renderChartLines(this.maxYPoint);
-          },
-          i * 2,
-        );
-      }
-      return;
-    }
+    // if (this.maxYPoint > this.props.viewerMaxYPoint) {
+    //   this.setState({
+    //     isScalling: true,
+    //   });
+    //   const start = this.maxYPoint;
+    //   const end = this.props.viewerMaxYPoint;
+    //   const diff = start - end;
+    //   const step = Math.ceil(diff / 20);
+    //   for (let i = 0; i <= diff; i += step) {
+    //     setTimeout(
+    //       () => {
+    //         console.log(this.maxYPoint);
+    //         if (i > (diff - step)) {
+    //           this.maxYPoint = end;
+    //           this.renderChartLines(this.maxYPoint);
+    //           this.setState({
+    //             isScalling: false,
+    //           });
+    //           return;
+    //         }
 
-    if (this.maxYPoint < this.props.viewerMaxYPoint) {
-      this.setState({
-        isScalling: true,
-      });
-      const start = this.props.viewerMaxYPoint;
-      const end = this.maxYPoint;
-      const diff = start - end;
-      const step = Math.ceil(diff / 20);
-      for (let i = 0; i <= diff; i += step) {
-        setTimeout(
-          () => {
-            if (i > (diff - step)) {
-              this.maxYPoint = start;
-              this.renderChartLines(this.maxYPoint);
-              this.setState({
-                isScalling: false,
-              });
-              return;
-            }
+    //         this.maxYPoint -= step;
+    //         this.renderChartLines(this.maxYPoint);
+    //       },
+    //       i * 2,
+    //     );
+    //   }
+    //   return;
+    // }
 
-            this.maxYPoint += step;
-            this.renderChartLines(this.maxYPoint);
-          },
-          i * 2,
-        );
-      }
-      return;
-    }
+    // if (this.maxYPoint < this.props.viewerMaxYPoint) {
+    //   this.setState({
+    //     isScalling: true,
+    //   });
+    //   const start = this.props.viewerMaxYPoint;
+    //   const end = this.maxYPoint;
+    //   const diff = start - end;
+    //   const step = Math.ceil(diff / 20);
+    //   for (let i = 0; i <= diff; i += step) {
+    //     setTimeout(
+    //       () => {
+    //         console.log(this.maxYPoint);
+    //         if (i > (diff - step)) {
+    //           this.maxYPoint = start;
+    //           this.renderChartLines(this.maxYPoint);
+    //           this.setState({
+    //             isScalling: false,
+    //           });
+    //           return;
+    //         }
 
-    this.renderChartLines(this.maxYPoint);
+    //         this.maxYPoint += step;
+    //         this.renderChartLines(this.maxYPoint);
+    //       },
+    //       i * 2,
+    //     );
+    //   }
+    //   return;
+    // }
+
+    this.renderChartLines(this.props.viewerMaxYPoint);
   }
 
   // select date

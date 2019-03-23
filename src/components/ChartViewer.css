@@ -68,6 +68,8 @@
 	color: #888;
 
 	opacity: 1;
+
+	-moz-user-select: none;
 	user-select: none;
 	animation: fade-in 0.1s;
 }
@@ -100,6 +102,7 @@
 .current-info__lines {
 	display: flex;
 	justify-content: space-between;
+	flex-wrap: wrap;
 	margin: 0;
 	padding: 0;
 

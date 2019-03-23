@@ -11,7 +11,7 @@ export const fetchCharts = () => async (dispatch) => {
   dispatch(fetchChartsRequest({ source }));
   try {
     const data = await import(/* webpackChunkName: "inputdata" */ '../data/chart_data.json');
-    dispatch(fetchChartsSuccess({ charts: data[0] }));
+    dispatch(fetchChartsSuccess({ charts: data['0'] }));
   } catch (e) {
     console.log(e);
     dispatch(fetchChartsFailure({ e }));
